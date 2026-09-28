@@ -124,6 +124,7 @@ MIT License，详见 [LICENSE](./LICENSE)。
 nwpu-to-apple-calendar/
 ├── nwpu-to-apple-calendar.user.js
 ├── README.md
+├── CHANGELOG.md
 └── LICENSE
 ```
 
