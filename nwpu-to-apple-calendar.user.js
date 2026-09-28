@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NWPU → Apple Calendar
 // @namespace    https://jwxt.nwpu.edu.cn/
-// @version      1.0.0
+// @version      1.0.1
 // @description  将西北工业大学新版教务系统课表导出为 Apple Calendar ICS
 // @author       kv (kingvamp4r)
 // @license      MIT
