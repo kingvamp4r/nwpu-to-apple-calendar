@@ -3,6 +3,12 @@
 // @namespace    https://jwxt.nwpu.edu.cn/
 // @version      1.0.0
 // @description  将西北工业大学新版教务系统课表导出为 Apple Calendar ICS
+// @author       kv (kingvamp4r)
+// @license      MIT
+// @homepageURL  https://github.com/kingvamp4r/nwpu-to-apple-calendar
+// @supportURL   https://github.com/kingvamp4r/nwpu-to-apple-calendar/issues
+// @downloadURL  https://raw.githubusercontent.com/kingvamp4r/nwpu-to-apple-calendar/main/nwpu-to-apple-calendar.user.js
+// @updateURL    https://raw.githubusercontent.com/kingvamp4r/nwpu-to-apple-calendar/main/nwpu-to-apple-calendar.user.js
 // @match        https://jwxt.nwpu.edu.cn/*
 // @grant        none
 // @run-at       document-start
