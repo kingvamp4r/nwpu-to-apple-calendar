@@ -1,0 +1,12 @@
+[Unit]
+Description=Check NWPU calendar session and course data
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/nwpu-to-apple-calendar
+ExecStart=/usr/bin/xvfb-run -a %h/nwpu-to-apple-calendar/.venv/bin/python collector.py check
+ExecStartPost=%h/nwpu-to-apple-calendar/.venv/bin/python subscription.py publish
+UMask=0077
+TimeoutStartSec=300
+NoNewPrivileges=true

@@ -1,133 +1,154 @@
 # NWPU → Apple Calendar
 
-将西北工业大学新版教务系统课表一键导出为 Apple Calendar / iCalendar（`.ics`）文件的 Tampermonkey 用户脚本。
+将西北工业大学新版教务系统的**课表与考试安排**导出为 `.ics`，或通过个人订阅链接持续更新 Apple Calendar。
 
-[直接安装 / 更新脚本](https://raw.githubusercontent.com/kingvamp4r/nwpu-to-apple-calendar/main/nwpu-to-apple-calendar.user.js)
+当前版本：**1.3.0**。支持 Chrome + Tampermonkey、macOS Apple Calendar，以及 Debian 服务器上的邀请制多人订阅。
 
-## 功能
+[安装／更新插件](https://cal.kingvamp.asia/client.user.js) · [GitHub 源码安装入口](https://raw.githubusercontent.com/kingvamp4r/nwpu-to-apple-calendar/main/nwpu-to-apple-calendar.user.js) · [更新记录](CHANGELOG.md) · [服务器部署说明](deploy/README.md)
 
-- 在西工大新版教务系统中自动读取当前课表
-- 自动读取学期起止日期和教学周定义
-- 正确处理单双周、非连续周次和同一课程不同周次的不同上课时间
-- 使用教务系统返回的实际 `startTime` / `endTime`
-- 将每一次实际课程生成独立的 `VEVENT`
-- 导出标准 `.ics`，可直接导入 macOS / iPhone / iPad 的日历
-- 不需要手动打开 DevTools，也不需要复制 Cookie、学号或密码
-- 支持通过 GitHub Raw 地址由 Tampermonkey 检查脚本更新
+## 一般用户：首次使用
 
-## 已测试环境
+### 1. 安装插件
 
-- macOS
-- Google Chrome
-- Tampermonkey
-- 西北工业大学新版教务系统：`https://jwxt.nwpu.edu.cn/student/home`
+1. 在 Chrome 安装 Tampermonkey。
+2. 点击上方“安装／更新插件”，在 Tampermonkey 页面确认安装或更新。
+3. 登录自己的教务系统，刷新 `https://jwxt.nwpu.edu.cn/student/home`。
+4. 页面右下角会出现“西工大日历”面板。
 
-## 安装
+插件不含任何人的订阅链接或上传密钥。仅安装脚本不会获得别人的课表。
 
-### 推荐：一键安装
+### 2. 配对自己的设备
 
-1. 先在 Chrome 中安装 Tampermonkey。
-2. 点击：[安装 NWPU → Apple Calendar](https://raw.githubusercontent.com/kingvamp4r/nwpu-to-apple-calendar/main/nwpu-to-apple-calendar.user.js)
-3. Tampermonkey 应自动打开脚本安装页，确认安装即可。
+使用订阅服务需要先向管理员领取**一次性配对码**，有效期十分钟。
 
-脚本元数据已经配置 `@updateURL` 和 `@downloadURL`。之后只要仓库中的版本号提高，Tampermonkey 即可按其自身更新策略检查新版。
+1. 展开面板中的“新设备配对”。
+2. 服务地址填写 `https://cal.kingvamp.asia`。
+3. 输入配对码，可填写设备备注，例如“我的笔记本”。
+4. 点击“配对并获取订阅”。成功后，个人订阅链接及设备上传凭证会保存在 Tampermonkey 脚本存储中。
 
-### 手动安装
+每台设备分别领取配对码。同一个人的多台设备共用个人日历，但各自使用不同的上传凭证。配对码过期、已使用或配对结果不明时，请联系管理员检查设备记录并领取新码。
 
-也可以新建一个 Tampermonkey 用户脚本，然后把 `nwpu-to-apple-calendar.user.js` 的完整内容复制进去。
+已有配置的设备再次配对会切换本机绑定；为避免误上传，成功配对后需要重新打开课表或考试页面。不要把配对码发给其他人。
 
-## 使用
+### 3. 同步课表与考试
 
-1. 登录西北工业大学教务系统。
-2. 刷新 `https://jwxt.nwpu.edu.cn/student/home`。
-3. 点击教务系统中的“课表”。
-4. 页面右下角会出现 **NWPU → Apple Calendar** 面板。
-5. 等待出现“课表数据读取完成”。
-6. 点击 **下载 Apple Calendar ICS**。
+1. 在教务系统打开“我的课表”或“考试信息”。面板会自动切换对应内容。
+2. 等待面板显示“已读取”。
+3. 点击“同步到日历”，确认提示“服务器已更新”。
+4. 也可在“设置”中勾选“读取后自动同步”，保存后，今后打开相关页面便会自动上传。
 
-脚本会下载当前学期的 `.ics` 文件。
+“服务器已更新”表示数据已发布到订阅服务，**不代表 Apple 日历已经刷新**。
 
-## 导入 Apple 日历
+考试页面会读取当前表格中的全部记录，包括隐藏的已结束考试。时间不完整时不会猜测考试时长；请检查教务安排，稍后重新读取。
 
-在 Mac 上双击生成的 `.ics` 文件，然后选择目标日历。
+### 4. 在 Apple Calendar 添加订阅
 
-如果希望同一个 Apple ID 下的 Mac、iPhone、iPad 自动同步，建议先在 Apple「日历」中创建一个 **iCloud 日历**（例如“NWPU 课表”），再把生成的 `.ics` 导入到这个 iCloud 日历。
+课表和考试是两个独立日历，各添加一次即可：
 
-本项目目前采用“一次导出、导入 iCloud”的方式，不依赖额外服务器。由于大学课表通常在开学前已经确定，这种方式比持续维护在线 ICS 订阅服务更简单可靠；若学期中发生调课或换教室，重新导出并更新即可。
+1. 在面板选择“课表”，点击“添加订阅”，由 Apple 日历接管并确认。
+2. 建议将订阅位置设为 **iCloud**，自动刷新设为**每小时**。
+3. 切换到“考试安排”，重复添加订阅。
+4. 其他使用同一 Apple 账户并启用 iCloud 日历的设备可使用这两份订阅。
 
-## 工作原理
+如果按钮未能打开日历，在“更多操作”中点击“复制订阅链接”，再到 Mac 日历的“文件 → 新建日历订阅”中粘贴。
 
-新版教务系统主页会以内嵌页面加载课表。脚本在同源页面中运行，监听教务系统自身已经发出的 XHR 请求，并读取：
+已有订阅无需重复添加。旧的手动导入事件不会随新订阅自动删除，请确认内容后自行处理重复记录。
 
-- `/student/for-std/course-table/semester/.../print-data/...`
-- `/student/ws/semester/get/...`
+### 无需服务器：只下载日历文件
 
-课表接口中的 `studentTableVm.activities` 提供生成日历所需的核心字段，包括：
+不配对也可以导出：打开课表或考试页面，等待读取完成，在“更多操作”中点击“下载日历文件”，再导入 Apple 日历。
 
-- `courseName`
-- `weekIndexes`
-- `weekday`
-- `startTime`
-- `endTime`
-- `room`
-- `building`
-- `campus`
-- `teachers`
+这是一次性导入，后续变化需要重新导出；订阅方式才会自动刷新。
 
-学期接口提供 `startDate` 和 `weekStartOnSunday`。脚本据此将“教学周 + 星期”转换为实际日期，再生成 iCalendar 事件。
+## 管理员：创建与管理用户
 
-当学期第一周周一为 `D0`，某课程位于第 `w` 周、星期 `d` 时：
+管理员仅通过自己的 SSH／Tailscale 通道操作服务器。普通用户无需 SSH 权限，也无需提供教务密码、Cookie 或手机验证码。
 
-```text
-date = D0 + 7 × (w - 1) + (d - 1)
+在已部署服务的服务器上执行：
+
+```bash
+cd ~/nwpu-to-apple-calendar
+
+# 创建一个人，返回 user_id、一次性配对码及有效期
+.venv/bin/python accounts.py create-user '用户备注'
 ```
 
-脚本不会把整门课程简单写成一个每周重复事件，而是按照 `weekIndexes` 为每一个实际上课周生成独立 `VEVENT`。因此可以自然处理单双周、非连续周、不同周次换星期或换教室等情况。
+将返回的 `pairing_code` **私下交给对应用户**，让其在十分钟内配对。`user_id` 是服务内部随机标识，不必使用学号或真实姓名。请保留 user_id，以便后续管理。
 
-## 隐私与安全
+```bash
+# 同一个人增加设备或重新领取配对码：替换 USER_ID
+.venv/bin/python accounts.py pair-device USER_ID
 
-脚本：
+# 查看用户、设备 ID、启用状态和设备上次请求时间；不显示凭证
+.venv/bin/python accounts.py list
 
-- 不保存或上传统一身份认证账号密码
-- 不读取或导出浏览器 Cookie
-- 不硬编码学号、学生关联 ID 或 semester ID
-- 不向第三方服务器上传课表
-- 所有课表解析和 ICS 生成均在浏览器本地完成
+# 撤销一台设备：替换 DEVICE_ID，不影响该用户的其他设备及订阅
+.venv/bin/python accounts.py revoke-device DEVICE_ID
 
-脚本只是读取教务系统页面自身已经取得的课表响应。生成的 `.ics` 文件会包含你的课程名称、教师、教室等课表信息，请自行妥善保管。
-
-## 兼容性与限制
-
-- 当前版本针对西北工业大学现行新版教务系统编写。
-- 当前已验证的教学周定义为 `weekStartOnSunday === false`，即周一作为教学周首日。
-- 如果学校升级教务系统并改变接口路径或 JSON 字段，脚本可能需要更新。
-- 如果课表页面已经打开，再安装或启用脚本，建议刷新整个 `/student/home` 页面后重新进入课表。
-
-## 更新
-
-Tampermonkey 安装版包含：
-
-```text
-@updateURL
-@downloadURL
+# 停用一个人：替换 USER_ID，阻止其所有设备上传及所有订阅读取
+.venv/bin/python accounts.py disable-user USER_ID
 ```
 
-二者均指向本仓库 `main` 分支的 Raw userscript。发布新版本时应同步提高脚本头部的 `@version`。
+管理命令默认操作当前目录下的 `data/`，也可通过 `--data-dir /绝对路径` 指定。停用会保留数据，不等于删除。删除请求需要管理员停用后清理相应用户的数据及备份；当前没有公网管理、自助删除或账号找回界面。
 
-## License
+### 首次部署与更新
 
-MIT License，详见 [LICENSE](./LICENSE)。
+完整安装、systemd、Cloudflare Tunnel 和个人采集器说明见 [deploy/README.md](deploy/README.md)。
 
-## 文件
+服务默认监听 `127.0.0.1:8791`，通过 Tunnel 将订阅域名映射到该地址。`data/` 和浏览器调试端口不能公开。
 
-```text
-nwpu-to-apple-calendar/
-├── nwpu-to-apple-calendar.user.js
-├── README.md
-├── CHANGELOG.md
-└── LICENSE
+- 新用户数据：`data/users/USER_ID/`。
+- 用户、设备和配对记录：私有 `data/accounts.sqlite3`。
+- 启动时自动将原单用户配置登记为 `owner`，保留原订阅链接、上传凭证、事件 UID 和数据目录。
+- 设备上传凭证保存哈希；个人订阅令牌保存在私有数据库中，订阅链接相当于只读访问凭证。
+- 同一设备上传至少间隔 0.5 秒；请求最多 2 MB，课表最多 500 块／20000 个事件，考试最多 500 条；整个实例每分钟最多接受 30 次配对尝试。
+
+升级服务前备份私有数据及事件映射。SQLite 数据库需停服复制或使用 SQLite backup API，避免不一致备份。不要将数据、配对码、个人订阅地址或上传密钥提交到 GitHub。
+
+### 自动更新的边界
+
+多人模式使用**各自浏览器采集**：用户打开课表或考试页面，插件上传所需数据，服务器生成各自独立的只读订阅。
+
+- 服务器不会代替新增用户登录教务，也不会索取其验证码或保存其登录会话。
+- 未打开相关页面时，订阅继续提供上次成功数据，不能保证每天取得新数据。
+- 可选的个人采集器每日北京时间 06:00 检查原 owner 的课表；考试仍依赖浏览器访问。
+- 另一端登录可能使 owner 采集会话失效；失败会保留上一份课表，需要人工验证码续登。
+- 客户端刷新与服务器更新独立，无法保证实时显示。
+
+## 数据处理与限制
+
+### 课表
+
+脚本监听同源课表 XHR，读取课表与学期信息。按教学周、星期和学期首日计算实际日期，使用教务系统的开始／结束时间，为每次上课生成独立事件，支持单双周和非连续周。
+
+服务端通过持久事件映射保留 UID，并递增修改版本；无法可靠匹配的复杂改期使用取消旧事件、新增事件。全空课表需要人工复核，不会直接清空已有订阅。
+
+当前服务端支持周一作为教学周首日，且学期首日为周一的学期；学校接口或定义变化时需要适配。
+
+### 考试
+
+从考试安排 HTML 表格读取课程名称、考试类型、日期、开始／结束时间及考场。当前已验证页面未提供座位号及考试要求，不生成这些字段。
+
+页面没有稳定的考试记录 ID，服务按课程、考试类型及学年匹配。单场改期可保留 UID；同名同类型的多场考试需要核对对应关系。页面遗漏记录不视为取消，避免因筛选或暂缺而误删。收到明确取消安排时，当前需要管理员人工处理。
+
+### 隐私
+
+普通用户插件不读取或上传教务 Cookie、账号密码或验证码。课表上传会筛选日历所需字段，服务按上传凭证定位用户，不信任请求自带的 user_id。
+
+日历信息包括课程／考试名称、教师、时间和教室。上传与订阅经配置的同步服务传输；使用 Cloudflare Tunnel 时也会经 Cloudflare。持有完整订阅链接的人可读取对应日历，请勿公开分享。
+
+可选 owner 采集器会在自己的服务器保存登录会话，与普通用户浏览器上传模式不同。
+
+## 开发与验证
+
+```bash
+python3 -m unittest discover -s tests -v
 ```
 
-## 免责声明
+`browser-sync.js` 是整合进 userscript 的面板与同步模块源码。修改它时需同步更新 `nwpu-to-apple-calendar.user.js` 中对应模块，保持 Release 附件与安装源一致。
 
-这是一个非官方工具，与西北工业大学无隶属关系。请仅在你有权访问的个人教务系统账户中使用。
+当前发行脚本的 `@updateURL`、`@downloadURL` 指向 `https://cal.kingvamp.asia/client.user.js`，由该服务托管新版。自部署时需同步修改服务域名、配对界面的域名校验和 `@connect`，并将相同脚本部署到自己的服务。
+
+## License 与免责声明
+
+[MIT License](LICENSE)。这是非官方工具，与西北工业大学无隶属关系。请仅访问自己有权使用的教务账户，并在使用前核对重要考试安排。
